@@ -1,0 +1,146 @@
+---
+title: "ISLR: Chapter 3: Assignment"
+author: "Akhilesh Jain"
+date: "July 23, 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
+                      echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+## Load Libraries
+
+```{r load library , results="hide"}
+library("MASS")
+library("ISLR")
+```
+
+Auto Dataframe
+
+```{r summary , include=TRUE, echo=TRUE}
+summary(Auto)
+names(Auto)
+attach(Auto) #Use column names as variables
+
+#fix(Auto) # view dataframe
+```
+
+## Question 8
+
+8. This question involves the use of simple linear regression on the Auto
+data set.
+(a) Use the lm() function to perform a simple linear regression with
+mpg as the response and horsepower as the predictor. Use the
+summary() function to print the results. Comment on the output.
+
+```{r q8a , include=TRUE, echo=TRUE}
+lm.fit=lm(mpg~horsepower,data=Auto)
+summary(lm.fit)
+confint (lm.fit) #confidence interval for the coefficients
+```
+
+i. Is there a relationship between the predictor and the response?
+
+t-statistic>>1 indicates that the null-hypothesis is false and there is a relation ship between the predictor and response. A small p-value indicates that there is a small probability that this result is incorrect. 
+
+ii. How strong is the relationship between the predictor and
+the response?
+
+The R^2 of the fit is 0.6059 indicating that 60% of the variance in mpg is explained by horsepower.
+
+iii. Is the relationship between the predictor and the response
+positive or negative?
+
+The coefficient of horsepower is negative indicating that the relationship is negative.
+
+iv. What is the predicted mpg associated with a horsepower of
+98? What are the associated 95 % confidence and prediction
+intervals?
+
+```{r q8aiv , include=TRUE, echo=TRUE}
+predict(lm.fit,data.frame(horsepower=98),interval="confidence")
+predict(lm.fit,data.frame(horsepower=98),interval="prediction")
+```
+
+
+(b) Plot the response and the predictor. Use the abline() function
+to display the least squares regression line.
+
+```{r q8b , include=TRUE, echo=TRUE}
+plot(horsepower,mpg)
+abline(lm.fit,lwd=2,col="red")
+```
+
+(c) Use the plot() function to produce diagnostic plots of the least
+squares regression fit. Comment on any problems you see with
+the fit.
+
+```{r q8c , include=TRUE, echo=TRUE}
+par(mfrow=c(2,2))
+plot(lm.fit)
+```
+
+## Question 9
+
+9. This question involves the use of multiple linear regression on the
+Auto data set.
+(a) Produce a scatterplot matrix which includes all of the variables
+in the data set.
+
+```{r q9a , include=TRUE, echo=TRUE}
+pairs(Auto, labels = colnames(Auto), main = "Auto Pairs matrix", pch = 21, 
+      bg = c("red", "green3", "blue", "yellow", "green3", "red", "green3", "black")[unclass(Auto$cylinders)], lower.panel = NULL)
+```
+
+(b) Compute the matrix of correlations between the variables using
+the function cor(). You will need to exclude the name variable, cor() which is qualitative.
+
+```{r q9b , include=TRUE, echo=TRUE}
+Auto2 = Auto[,(1:8)]
+#head(Auto2)
+COR <- cor(Auto2)
+image(x=seq(nrow(COR)), y=seq(ncol(COR)), z=cor(Auto2), axes=F, xlab="", ylab="")
+text(expand.grid(x=seq(dim(COR)[1]), y=seq(dim(COR)[2])), labels=round(c(COR),2))
+box()
+axis(1, at=seq(nrow(COR)), labels = rownames(COR), las=2)
+axis(2, at=seq(ncol(COR)), labels = colnames(COR), las=1)
+```
+
+(c) Use the lm() function to perform a multiple linear regression
+with mpg as the response and all other variables except name as
+the predictors. Use the summary() function to print the results.
+Comment on the output. For instance:
+i. Is there a relationship between the predictors and the response?
+ii. Which predictors appear to have a statistically significant
+relationship to the response?
+iii. What does the coefficient for the year variable suggest?
+
+```{r q9c , include=TRUE, echo=TRUE}
+lm.fit2=lm(mpg~.-name,data=Auto)
+summary(lm.fit2)
+```
+
+
+(d) Use the plot() function to produce diagnostic plots of the linear
+regression fit. Comment on any problems you see with the fit.
+Do the residual plots suggest any unusually large outliers? Does
+the leverage plot identify any observations with unusually high
+leverage?
+```{r q9d , include=TRUE, echo=TRUE}
+par(mfrow=c(2,2))
+plot(lm.fit2)
+dev.off()
+lev = hat(model.matrix(lm.fit2))
+plot(lev)
+Auto[lev>0.1,]
+```
+
+(e) Use the * and : symbols to fit linear regression models with
+interaction effects. Do any interactions appear to be statistically
+significant?
+(f) Try a few different transformations of the variables, such as
+log(X), √X, X2. Comment on your findings.
