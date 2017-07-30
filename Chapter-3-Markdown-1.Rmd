@@ -1,5 +1,6 @@
 ---
 title: "ISLR: Chapter 3: Q8 and 9"
+title: "ISLR: Chapter 3 : Q8 & 9"
 author: "Akhilesh Jain"
 date: "July 23, 2017"
 output:
