@@ -31,7 +31,11 @@ attach(Auto) #Use column names as variables
 
 ## Question 8
 
+<<<<<<< HEAD
 8. Thise question involves the use of simple linear regression on the Auto
+=======
+8. This question involves the use of simple linear regression on the Auto
+>>>>>>> 8619eb55122784752060c3e8cef2a3e42c9f51a0
 data set.
 (a) Use the lm() function to perform a simple linear regression with
 mpg as the response and horsepower as the predictor. Use the
@@ -45,6 +49,7 @@ confint (lm.fit) #confidence interval for the coefficients
 
 i. Is there a relationship between the predictor and the response?
 
+<<<<<<< HEAD
 t-statistic>>1 indicates that the null-hypothesis is false and there is a relation ship between the predictor and response. A small p-value indicates that there is a small probability that this association is statistically significant. 
 
 (a small p-value indicates that it is unlikely to observe such a substantial association between the predictor
@@ -59,6 +64,23 @@ iii. Is the relationship between the predictor and the response positive or nega
 The coefficient of horsepower is negative indicating that the relationship is negative.
 
 iv. What is the predicted mpg associated with a horsepower of 98? What are the associated 95 % confidence and prediction intervals?
+=======
+t-statistic>>1 indicates that the null-hypothesis is false and there is a relation ship between the predictor and response. A small p-value indicates that there is a small probability that this result is incorrect. 
+
+ii. How strong is the relationship between the predictor and
+the response?
+
+The R^2 of the fit is 0.6059 indicating that 60% of the variance in mpg is explained by horsepower.
+
+iii. Is the relationship between the predictor and the response
+positive or negative?
+
+The coefficient of horsepower is negative indicating that the relationship is negative.
+
+iv. What is the predicted mpg associated with a horsepower of
+98? What are the associated 95 % confidence and prediction
+intervals?
+>>>>>>> 8619eb55122784752060c3e8cef2a3e42c9f51a0
 
 ```{r q8aiv , include=TRUE, echo=TRUE}
 predict(lm.fit,data.frame(horsepower=98),interval="confidence")
@@ -83,6 +105,7 @@ par(mfrow=c(2,2))
 plot(lm.fit)
 ```
 
+<<<<<<< HEAD
 The leverage of an observation measures its ability to move the regression model all by
 itself by simply moving in the y-direction. The leverage measures the amount by which
 the predicted value would change if the observation was shifted one unit in the ydirection.
@@ -126,6 +149,8 @@ plot(cookdist,ylab="Cook's distance",col = 'blue', xlim=c(0,400), ylim=c(0,0.1))
 ```
 
 
+=======
+>>>>>>> 8619eb55122784752060c3e8cef2a3e42c9f51a0
 ## Question 9
 
 9. This question involves the use of multiple linear regression on the
@@ -175,6 +200,7 @@ leverage?
 ```{r q9d , include=TRUE, echo=TRUE}
 par(mfrow=c(2,2))
 plot(lm.fit2)
+<<<<<<< HEAD
 #dev.off()
 ```
 
@@ -186,6 +212,12 @@ plot(horsepower,mpg, xlim=c(20,250), ylim=c(0,50))
 par(new=TRUE)
 plot(horsepower[lev>0.1],mpg[lev>0.1],col = 'red', xlab = "", ylab = "", xlim=c(20,250), ylim=c(0,50))
 abline(lm.fit2,lwd=2,col="red")
+=======
+dev.off()
+lev = hat(model.matrix(lm.fit2))
+plot(lev)
+Auto[lev>0.1,]
+>>>>>>> 8619eb55122784752060c3e8cef2a3e42c9f51a0
 ```
 
 (e) Use the * and : symbols to fit linear regression models with
