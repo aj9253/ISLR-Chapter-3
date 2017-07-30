@@ -1,0 +1,229 @@
+---
+title: "ISLR: Chapter 3: Q8 and 9"
+author: "Akhilesh Jain"
+date: "July 23, 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=6, fig.path='Figs/',
+                      echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+## Load Libraries
+
+```{r load library , results="hide"}
+library("MASS")
+library("ISLR")
+```
+
+Auto Dataframe
+
+```{r summary , include=TRUE, echo=TRUE}
+summary(Auto)
+names(Auto)
+attach(Auto) #Use column names as variables
+
+#fix(Auto) # view dataframe
+```
+
+## Question 8
+
+8. Thise question involves the use of simple linear regression on the Auto
+data set.
+(a) Use the lm() function to perform a simple linear regression with
+mpg as the response and horsepower as the predictor. Use the
+summary() function to print the results. Comment on the output.
+
+```{r q8a , include=TRUE, echo=TRUE}
+lm.fit=lm(mpg~horsepower,data=Auto)
+summary(lm.fit)
+confint (lm.fit) #confidence interval for the coefficients
+```
+
+i. Is there a relationship between the predictor and the response?
+
+t-statistic>>1 indicates that the null-hypothesis is false and there is a relation ship between the predictor and response. A small p-value indicates that there is a small probability that this association is statistically significant. 
+
+(a small p-value indicates that it is unlikely to observe such a substantial association between the predictor
+and the response due to chance, in the absence of any real association between the predictor and the response)
+
+ii. How strong is the relationship between the predictor and the response?
+
+The R^2 statistic of the fit is 0.6059 indicating that 60.59% of the variance in mpg is explained by horsepower.
+
+iii. Is the relationship between the predictor and the response positive or negative?
+
+The coefficient of horsepower is negative indicating that the relationship is negative.
+
+iv. What is the predicted mpg associated with a horsepower of 98? What are the associated 95 % confidence and prediction intervals?
+
+```{r q8aiv , include=TRUE, echo=TRUE}
+predict(lm.fit,data.frame(horsepower=98),interval="confidence")
+predict(lm.fit,data.frame(horsepower=98),interval="prediction")
+```
+
+
+(b) Plot the response and the predictor. Use the abline() function
+to display the least squares regression line.
+
+```{r q8b , include=TRUE, echo=TRUE}
+plot(horsepower,mpg)
+abline(lm.fit,lwd=2,col='red')
+```
+
+(c) Use the plot() function to produce diagnostic plots of the least
+squares regression fit. Comment on any problems you see with
+the fit.
+
+```{r q8c , include=TRUE, echo=TRUE}
+par(mfrow=c(2,2))
+plot(lm.fit)
+```
+
+The leverage of an observation measures its ability to move the regression model all by
+itself by simply moving in the y-direction. The leverage measures the amount by which
+the predicted value would change if the observation was shifted one unit in the ydirection.
+
+The leverage always takes values between 0 and 1. A point with zero leverage has no
+effect on the regression model. If a point has leverage equal to 1 the line must follow the
+point perfectly.
+
+Plot of leverage of each point 
+
+```{r q8 lev , include=TRUE, echo=TRUE}
+lev = hat(model.matrix(lm.fit))
+plot(lev)
+Auto[lev>0.025,]
+plot(horsepower,mpg, xlim=c(20,250), ylim=c(0,50))
+par(new=TRUE)
+plot(horsepower[lev>0.02],mpg[lev>0.02],col = 'red', xlab = "", ylab = "", xlim=c(20,250), ylim=c(0,50))
+#points(Auto[7,]$horsepower,Auto[7,]$mpg, col = 'red')
+```
+The leverage for this case is pretty low at less than < 0.03. 
+
+Prior to studying the residuals it is common to standardize them to compensate for differences in leverage. THe studentized residual are residuals normalized the leverage. Points with studentized residual > 3 are outliers.
+
+
+
+```{r q8 residual , include=TRUE, echo=TRUE}
+stud_residual = rstudent(lm.fit) # Calculate studentized results
+plot(mpg,stud_residual)
+```
+
+
+An influential point is one if removed from the data would significantly change the fit. An
+influential point may either be an outlier or have large leverage, or both, but it will tend
+to have at least one of those properties. Cook’s distance is a commonly used influence
+measure that combines these two properties. Points with Cooks distance greater than 1 are classified as being influential.
+
+
+```{r q8 Cook dist , include=TRUE, echo=TRUE}
+cookdist = cooks.distance(lm.fit) # Calculate Cook's distance
+plot(cookdist,ylab="Cook's distance",col = 'blue', xlim=c(0,400), ylim=c(0,0.1))
+```
+
+
+## Question 9
+
+9. This question involves the use of multiple linear regression on the
+Auto data set.
+(a) Produce a scatterplot matrix which includes all of the variables
+in the data set.
+
+```{r q9a , include=TRUE, echo=TRUE}
+pairs(Auto, labels = colnames(Auto), main = "Auto Pairs matrix", pch = 21, 
+      bg = c("red", "green3", "blue", "yellow", "green3", "red", "green3", "black")[unclass(Auto$cylinders)], lower.panel = NULL)
+```
+
+(b) Compute the matrix of correlations between the variables using
+the function cor(). You will need to exclude the name variable, cor() which is qualitative.
+
+```{r q9b , include=TRUE, echo=TRUE}
+Auto2 = Auto[,(1:8)]
+#head(Auto2)
+COR <- cor(Auto2)
+image(x=seq(nrow(COR)), y=seq(ncol(COR)), z=cor(Auto2), axes=F, xlab="", ylab="")
+text(expand.grid(x=seq(dim(COR)[1]), y=seq(dim(COR)[2])), labels=round(c(COR),2))
+box()
+axis(1, at=seq(nrow(COR)), labels = rownames(COR), las=2)
+axis(2, at=seq(ncol(COR)), labels = colnames(COR), las=1)
+```
+
+(c) Use the lm() function to perform a multiple linear regression
+with mpg as the response and all other variables except name as
+the predictors. Use the summary() function to print the results.
+Comment on the output. For instance:
+i. Is there a relationship between the predictors and the response?
+ii. Which predictors appear to have a statistically significant
+relationship to the response?
+iii. What does the coefficient for the year variable suggest?
+
+```{r q9c , include=TRUE, echo=TRUE}
+lm.fit2=lm(mpg~.-name,data=Auto)
+summary(lm.fit2)
+```
+
+
+(d) Use the plot() function to produce diagnostic plots of the linear
+regression fit. Comment on any problems you see with the fit.
+Do the residual plots suggest any unusually large outliers? Does
+the leverage plot identify any observations with unusually high
+leverage?
+```{r q9d , include=TRUE, echo=TRUE}
+par(mfrow=c(2,2))
+plot(lm.fit2)
+#dev.off()
+```
+
+```{r q9d lev , include=TRUE, echo=TRUE}
+lev = hat(model.matrix(lm.fit2))
+Auto[lev>0.1,]
+plot(lev)
+plot(horsepower,mpg, xlim=c(20,250), ylim=c(0,50))
+par(new=TRUE)
+plot(horsepower[lev>0.1],mpg[lev>0.1],col = 'red', xlab = "", ylab = "", xlim=c(20,250), ylim=c(0,50))
+abline(lm.fit2,lwd=2,col='red')
+```
+
+(e) Use the * and : symbols to fit linear regression models with
+interaction effects. Do any interactions appear to be statistically
+significant?
+
+```{r q9e , include=TRUE, echo=TRUE}
+# lm.fit3=lm(mpg~.-name-cylinders-horsepower-acceleration-displacement,data=Auto)
+# lm.fit3=lm(mpg~.-name-cylinders-horsepower-acceleration-displacement+origin*weight + origin*year +year*weight+displacement*weight+displacement*year,data=Auto)
+lm.fit3=lm(mpg~.-name+origin*weight + origin*year +year*weight+displacement*weight+displacement*year,data=Auto)
+summary(lm.fit3)
+par(mfrow=c(2,2))
+plot(lm.fit3)
+```
+
+Without interaction parameter, the most important predictors were:
+displacement, weight, year and origin.
+
+When taking into account interaction terms, the most significant predictors are:
+horepower, year and displacement*weight
+
+
+(f) Try a few different transformations of the variables, such as
+log(X), √X, X2. Comment on your findings.
+
+```{r q9f , include=TRUE, echo=TRUE}
+lm.fit4=lm(mpg~.-name-displacement-cylinders+sqrt(weight)+sqrt(horsepower)+acceleration+I(acceleration^2),data=Auto)
+summary(lm.fit4)
+par(mfrow=c(2,2))
+plot(lm.fit4)
+```
+Started out with log,sqrt and square of weight, hp and acceleration and eliminated the statistically insignificant variables. 
+
+The most significant terms are sqrt(wt), sqrt(hp) and acc^2.
+```{r q9f plot , include=TRUE, echo=TRUE}
+# par(new=TRUE)
+
+plot(horsepower,mpg)
+# par(new=TRUE)
+abline(lm.fit4,lwd=2,col='red')
+```
