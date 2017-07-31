@@ -1,0 +1,117 @@
+---
+title: 'ISLR: Chapter 3 : Q13'
+author: "Akhilesh"
+date: "July 31, 2017"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=6, fig.path='Figs/',
+                      echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+13. In this exercise you will create some simulated data and will fit simple linear regression models to it. Make sure to use set.seed(1) prior to starting part (a) to ensure consistent results.
+
+
+(a) Using the rnorm() function, create a vector, x, containing 100 observations drawn from a N(0, 1) distribution. This represents a feature, X.
+
+```{r q13a,include=TRUE, echo=TRUE}
+set.seed(1)
+x=rnorm(100)
+plot(x)
+```
+
+(b) Using the rnorm() function, create a vector, eps, containing 100
+observations drawn from a N(0, 0.25) distribution i.e. a normal
+distribution with mean zero and variance 0.25.
+```{r q13b,include=TRUE, echo=TRUE}
+eps=rnorm(n=100,mean = 0, sd = sqrt(0.25))
+plot(eps)
+```
+
+(c) Using x and eps, generate a vector y according to the model
+Y = −1+0.5X + eps
+
+```{r q13c,include=TRUE, echo=TRUE}
+y=-1+0.5*x+eps
+plot(y)
+length(y)
+# lm.fit=lm(y~x)
+# summary(lm.fit)
+```
+
+What is the length of the vector y? What are the values of β0
+and β1 in this linear model?
+
+N = 100; β0 = -1.01; β1 = 0.499;
+
+(d) Create a scatterplot displaying the relationship between x and y. Comment on what you observe.
+
+```{r q13d,include=TRUE, echo=TRUE}
+plot(x,y)
+#lines(x,lm.fit$fitted.values, type = "l", col = "red")
+```
+
+Positive relation between x and y.
+
+(e) Fit a least squares linear model to predict y using x. Comment on the model obtained. How do βˆ0 and βˆ1 compare to β0 and β1?
+
+```{r q13e,include=TRUE, echo=TRUE}
+lm.fit=lm(y~x)
+summary(lm.fit)
+```
+
+βˆ0 and βˆ1 are about 2% off from β0 and β1.
+
+(f) Display the least squares line on the scatterplot obtained in (d). Draw the population regression line on the plot, in a different color. Use the legend() command to create an appropriate legend.
+
+```{r q13f,include=TRUE, echo=TRUE}
+plot(x,y)
+lines(x,lm.fit$fitted.values, type = "l", col = "red")
+abline(-1, 0.5, lwd=3, col=3)
+legend(-2, legend = c("model", "pop. regression"), col=c("red", 3), lwd=3)
+```
+
+(g) Now fit a polynomial regression model that predicts y using x and x2. Is there evidence that the quadratic term improves the model fit? Explain your answer.
+
+```{r q13g,include=TRUE, echo=TRUE}
+lm.fit2=lm(y~x+I(x^2))
+summary(lm.fit2)
+```
+
+The t-value is close to 1 and p-value is too large for the x^2 term so the nul hypothesis cannot be neglected for x^2.
+
+(h) Repeat (a)–(f) after modifying the data generation process in such a way that there is less noise in the data. The model (3.39) should remain the same. You can do this by decreasing the variance of the normal distribution used to generate the error term  in (b). Describe your results.
+
+```{r q13h, include=TRUE, echo=TRUE}
+eps=rnorm(n=100,mean = 0, sd = sqrt(0.1))
+y=-1+0.5*x+eps
+lm.fit3=lm(y~x)
+summary(lm.fit3)
+```
+
+When there is less noise, the RSE decreases from 0.4814 to 0.328 and R^2 increases from 46.74% to 65.95% indictaing that more of the variance is explained by the model
+
+
+(i) Repeat (a)–(f) after modifying the data generation process in such a way that there is more noise in the data. The model (3.39) should remain the same. You can do this by increasing the variance of the normal distribution used to generate the error term  in (b). Describe your results.
+
+```{r q13i, include=TRUE, echo=TRUE}
+eps=rnorm(n=100,mean = 0, sd = sqrt(0.5))
+y=-1+0.5*x+eps
+lm.fit4=lm(y~x)
+summary(lm.fit4)
+```
+
+When there is more noise, the RSE increases from 0.4814 to 0.7039 and R^2 decreases from 46.74% to 25.87% indictaing that less of the variance is explained by the model.
+
+(j) What are the confidence intervals for β0 and β1 based on the original data set, the noisier data set, and the less noisy data set? Comment on your results.
+
+
+```{r q13j, include=TRUE, echo=TRUE}
+confint (lm.fit3) #low noise
+confint (lm.fit)  #medium noise
+confint (lm.fit4) #high noise
+```
+
+
+The confidence interval increases as the noise increases indicating that we have less confidence on our prediction.
