@@ -1,0 +1,51 @@
+---
+title: 'ISLR: Chapter 3 : Q12'
+author: "Akhilesh Jain"
+date: "July 31, 2017"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=6, fig.path='Figs/',
+                      echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+12. This problem involves simple linear regression without an intercept.
+
+(a) Recall that the coefficient estimate ˆ β for the linear regression of Y onto X without an intercept is given by (3.38). Under what circumstance is the coefficient estimate for the regression of X onto Y the same as the coefficient estimate for the regression of YontoX?
+
+(i) When the sum of squares of x is same as sum of squares of y values.
+(ii)the coefficient of x/y is 1
+
+(b) Generate an example in R with n = 100 observations in which the coefficient estimate for the regression of X onto Y is different from the coefficient estimate for the regression of Y onto X.
+
+####Linear regression with no intercept - different coefficients
+
+```{r q11b , include=TRUE, echo=TRUE}
+set.seed(1)
+x=rnorm(100)
+y=2*x+rnorm(100)
+plot(x,y)
+lm.fit=lm(y~x+0)
+summary(lm.fit)
+lm.fit2=lm(x~y+0)
+summary(lm.fit2)
+```
+
+
+(c) Generate an example in R with n= 100 observations in which the coefficient estimate for the regression of X onto Y is the same as the coefficient estimate for the regression ofYontoX.
+
+####Linear regression with no intercept - same coefficients
+
+```{r q11c , include=TRUE, echo=TRUE}
+set.seed(1)
+x=rnorm(100)
+y=-sample(x, 100)
+plot(x,y)
+lm.fit3=lm(y~x+0)
+summary(lm.fit3)
+lm.fit4=lm(x~y+0)
+summary(lm.fit4)
+```
+
+We are sampling values from negative values x and assigning them to y such that sum of x^2 = y^2
