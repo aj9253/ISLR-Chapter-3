@@ -1,0 +1,127 @@
+---
+title: "ISLR: Chapter 3 : Q10"
+author: "Akhilesh Jain"
+date: "July 30, 2017"
+output: html_document
+---
+
+  
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=6, fig.path='Figs/',
+                      echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+## Load Libraries
+
+```{r load library , results="hide"}
+library("MASS")
+library("ISLR")
+```
+Carseats Dataframe
+
+```{r summary , include=TRUE, echo=TRUE}
+summary(Carseats)
+names(Carseats)
+head(Carseats)
+attach(Carseats) #Use column names as variables
+
+#fix(Carseats) # view dataframe
+```
+
+10. This question should be answered using theCarseatsdata set.
+(a) Fit a multiple regression model to predict SalesusingPrice, Urban,and US.
+
+```{r q10a , include=TRUE, echo=TRUE}
+lm.fit=lm(Sales~Price+Urban+US,data=Carseats)
+summary(lm.fit)
+confint (lm.fit) #confidence interval for the coefficients
+```
+
+
+(b) Provide an interpretation of each coefficient in the model. Be
+careful—some of the variables in the model are qualitative!
+
+Small t-stats and large p-stat indicate that Urban is not significant. Sales has strong dependence on Price and US. As price increases, Sales decreases.
+
+(c) Write out the model in equation form, being careful to handle
+the qualitative variables properly.
+
+Sales = 14.24 - 0.054*Price (if US = Yes)
+
+
+      = 13.04 - 0.054*Price (if US = No)
+      
+(d) For which of the predictors can you reject the null hypothesis
+H0:βj =0?
+
+```{r q10d , include=TRUE, echo=TRUE}
+lm.fit2=lm(Sales~.,data=Carseats)
+summary(lm.fit2)
+confint (lm.fit2) #confidence interval for the coefficients
+pairs(Carseats, labels = colnames(Carseats), main = "Carseats Pairs matrix", pch = 21, 
+      bg = c("red", "green3", "blue", "yellow", "green3", "red", "green3", "black")[unclass(Carseats$US)], lower.panel = NULL)
+```
+
+Null hypothesis can be neglected for:
+CompPrice,Income, Ad, Price, Shelve, Age
+
+(e) On the basis of your response to the previous question, fit a
+smaller model that only uses the predictors for which there is
+evidence of association with the outcome.
+
+```{r q10e , include=TRUE, echo=TRUE}
+lm.fit3=lm(Sales~.-Population-Education-Urban-US,data=Carseats)
+summary(lm.fit3)
+```
+
+(f) How well do the models in (a) and (e) fit the data?
+
+####ANOVA:
+
+```{r q10f , include=TRUE, echo=TRUE}
+compare=anova(lm.fit2,lm.fit3,test="Chisq")
+compare
+```
+
+Since RSE and R2 are similar, both the models are pretty close.
+
+(g) Using the model from (e), obtain 95 % confidence intervals for
+the coefficient(s).
+
+####95% Confidence Interval:
+
+```{r q10g , include=TRUE, echo=TRUE}
+confint (lm.fit3) #confidence interval for the coefficients
+```
+
+(h) Is there evidence of outliers or high leverage observations in the
+model from (e)?
+
+```{r q10h , include=TRUE, echo=TRUE}
+par(mfrow=c(2,2))
+plot(lm.fit3)
+```
+
+####Outliers:
+
+```{r q10h-outliers , include=TRUE, echo=TRUE}
+par(new=TRUE)
+stud_residual = rstudent(lm.fit3) # Calculate studentized results
+Carseats[stud_residual>3,]
+plot(stud_residual)
+```
+
+We plotted sudentized residuals and found that most of the points are between 3 and -3. One point 385 has high st. red. indicating its an outlier.
+
+####Leverage:
+
+```{r q10h-leverage , include=TRUE, echo=TRUE}
+lev = hat(model.matrix(lm.fit3))
+plot(lev)
+Carseats[lev>0.05,]
+cookdist = cooks.distance(lm.fit3) # Calculate Cook's distance
+plot(cookdist,ylab="Cook's distance",col = 'blue', xlim=c(0,400), ylim=c(0,0.1))
+
+```
+
+We plotted leverge and cook's distance. Since the cook's distance < 1, no points has very high leverage. Point with the highest leverage (0.05) is 311.

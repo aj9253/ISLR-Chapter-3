@@ -1,0 +1,79 @@
+---
+title: '"ISLR: Chapter 3 : Q11"'
+author: "Akhilesh Jain"
+date: "July 31, 2017"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=6, fig.path='Figs/',
+                      echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+In this problem we will investigate the t-statistic for the null hypothesis H0 : β= 0 in simple linear regression without an intercept. To begin, we generate a predictor x and a response y as follows.
+
+```{r dataset , include=TRUE, echo=TRUE}
+set.seed(1)
+x=rnorm(100)
+y=2*x+rnorm(100)
+plot(x,y)
+```
+
+(a) Perform a simple linear regression of y onto x, without an intercept. Report the coefficient estimate
+ˆ β, the standard error of this coefficient estimate, and the t-statistic and p-value associated with the null hypothesis H0 : β= 0. Comment on these results. (You can perform regression without an intercept using the commandlm(y∼x+0).)
+
+####Linear regression with no intercept (y on x)
+
+```{r q11a , include=TRUE, echo=TRUE}
+lm.fit=lm(y~x+0)
+summary(lm.fit)
+confint (lm.fit) #confidence interval for the coefficients
+plot(x,y)
+lines(x, lm.fit$fitted.values, type = "l", col = "red")
+```
+
+Coeffiecient: 1.9939
+Standard error: 0.1065
+t-val: 18.73
+p-val:<2e-16
+
+b) Now perform a simple linear regression ofxontoywithout an intercept, and report the coefficient estimate, its standard error, and the corresponding t-statistic and p-values associated with
+the null hypothesisH0:β= 0. Comment on these results.
+
+####Linear regression with no intercept (x on y)
+
+```{r q11b , include=TRUE, echo=TRUE}
+lm.fit2=lm(x~y+0)
+summary(lm.fit2)
+confint (lm.fit2) #confidence interval for the coefficients
+plot(y,x)
+lines(y, lm.fit2$fitted.values, type = "l", col = "red")
+```
+
+Coeffiecient: 0.39; Standard error: 0.02089; t-val: 18.73; p-val:<2e-16
+
+(c) What is the relationship between the results obtained in (a) and (b)?
+
+Models for predicting y & x. 
+
+(d)
+
+```{r q11d , include=TRUE, echo=TRUE}
+(sqrt(length(x)-1) * sum(x*y)) / (sqrt(sum(x*x) * sum(y*y) - (sum(x*y))^2))
+```
+
+(e) Using the results from (d), argue that the t-statistic for the regression of y onto x is the same as the t-statistic for the regression of x onto y.
+
+Swapping x for y gives the results. 
+
+(f) In R, show that when regression is performed with an intercept, the t-statistic for H0: β1= 0 is the same for the regression of y onto x as it is for the regression ofx onto y.
+
+```{r q11f , include=TRUE, echo=TRUE}
+lm.fit3=lm(y~x)
+summary(lm.fit3)
+lm.fit3$coefficients
+lm.fit4=lm(x~y)
+summary(lm.fit4)
+```
+The t-value is same at 18.56
+
