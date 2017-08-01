@@ -1,0 +1,135 @@
+---
+title: 'ISLR: Chapter 3 : Q14'
+author: "Akhilesh Jain"
+date: "July 31, 2017"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=6, fig.path='Figs/',
+                      echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+
+14. This problem focuses on the collinearity problem.
+(a) Perform the following commands inR:
+> set.seed(1)
+> x1=runif(100)
+> x2=0.5*x1+rnorm(100)/10
+> y=2+2*x1+0.3*x2+rnorm(100)
+The last line corresponds to creating a linear model in which y is a function of x1 and x2. Write out the form of the linear model. What are the regression coefficients?
+
+```{r q14a , include=TRUE, echo=TRUE}
+set.seed(1)
+x1=runif(100)
+x2=0.5*x1+rnorm(100)/10
+y=2+2*x1+0.3*x2+rnorm(100)
+```
+
+The regression coeeficients are 2 and 0.3
+
+β0 = 2 ;
+β1 = 2 ;
+β2 = 0.3 ;
+
+(b) What is the correlation between x1 and x2? Create a scatterplot displaying the relationship between the variables.
+
+```{r q14b , include=TRUE, echo=TRUE}
+cor(x1,x2)
+plot(x1,x2)
+```
+
+Correlation between x1 and x2 is high at 0.835.
+Figure shows that as x1 increases, x2 increases.
+
+(c) Using this data, fit a least squares regression to predict y using x1 and x2. Describe the results obtained. What are ˆ β0, ˆ β1,and ˆ β2? 
+
+How do these relate to the true β0, β1,and β2? Can you reject the null hypothesis H0 : β1 = 0? How about the null hypothesis H0:β2=0?
+
+```{r q14c , include=TRUE, echo=TRUE}
+lm.fit=lm(y~x1+x2)
+summary(lm.fit)
+confint (lm.fit) #confidence interval for the coefficients
+```
+
+β0 = 2.13 ;
+β1 = 1.43 ;
+β2 = 1.0097 ;
+
+THese are not the same as true coeffs. 
+
+The t-val for b2 is low and p-val too high. The null hypothesis for b2 can not be rejected. This is because x1 and x2 have high correlation. The effect of x2 is included in the coeff for x1. 
+
+(d) Now fit a least squares regression to predict y using only x1.Comment on your results. Can you reject the null hypothesis H0 : β1 = 0?
+
+```{r q14d , include=TRUE, echo=TRUE}
+lm.fit1=lm(y~x1)
+summary(lm.fit1)
+confint (lm.fit1) #confidence interval for the coefficients
+```
+
+Null hypothesis cannot be neglected since p-val is low and t-val is > 1.
+
+(e) Now fit a least squares regression to predict y using only x2.Comment on your results. Can you reject the null hypothesis H0 : β1 = 0?
+
+```{r q14e , include=TRUE, echo=TRUE}
+lm.fit2=lm(y~x2)
+summary(lm.fit2)
+confint (lm.fit2) #confidence interval for the coefficients
+```
+
+Null hypothesis cannot be neglected since p-val is low and t-val is > 1.
+
+(f) Do the results obtained in (c)–(e) contradict each other? Explain
+your answer.
+
+They do not contradict eachother. Since the correlation between x1 and x2 is high, only one of the two predictors need to be taken into account.
+
+
+(g) Now suppose we obtain one additional observation, which was
+unfortunately mismeasured.
+> x1=c(x1, 0.1)
+> x2=c(x2, 0.8)
+> y=c(y,6)
+
+Re-fit the linear models from (c) to (e) using this new data. What effect does this new observation have on the each of the models? In each model, is this observation an outlier? A high-leverage point? Both? Explain your answers.
+
+```{r q14g , include=TRUE, echo=TRUE}
+x1=c(x1, 0.1)
+x2=c(x2, 0.8)
+y=c(y,6)
+plot(x1,y)
+points(x1[101], y[101], col = "red")
+
+plot(x2,y)
+points(x2[101], y[101], col = "red")
+
+lm.fitg=lm(y~x1+x2)
+summary(lm.fitg)
+lm.fit1g=lm(y~x1)
+summary(lm.fit1g)
+lm.fit2g=lm(y~x1)
+summary(lm.fit2g)
+```
+
+####Outliers:
+
+```{r q14g-outliers , include=TRUE, echo=TRUE}
+par(new=TRUE)
+stud_residual = rstudent(lm.fitg) # Calculate studentized results
+plot(stud_residual)
+```
+
+There are no outliers.
+
+####Leverage:
+
+```{r q14g-leverage , include=TRUE, echo=TRUE}
+lev = hat(model.matrix(lm.fitg))
+plot(lev)
+cookdist = cooks.distance(lm.fitg) # Calculate Cook's distance
+plot(cookdist,ylab="Cook's distance",col = 'blue')
+
+```
+
+High Cooks distance means that the last added point has high leverage.
