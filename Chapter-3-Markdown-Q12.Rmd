@@ -21,7 +21,7 @@ knitr::opts_chunk$set(fig.width=8, fig.height=6, fig.path='Figs/',
 
 ####Linear regression with no intercept - different coefficients
 
-```{r q11b , include=TRUE, echo=TRUE}
+```{r q12b , include=TRUE, echo=TRUE}
 set.seed(1)
 x=rnorm(100)
 y=2*x+rnorm(100)
@@ -37,7 +37,7 @@ summary(lm.fit2)
 
 ####Linear regression with no intercept - same coefficients
 
-```{r q11c , include=TRUE, echo=TRUE}
+```{r q12c , include=TRUE, echo=TRUE}
 set.seed(1)
 x=rnorm(100)
 y=-sample(x, 100)

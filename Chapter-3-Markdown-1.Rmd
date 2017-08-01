@@ -141,6 +141,8 @@ pairs(Auto, labels = colnames(Auto), main = "Auto Pairs matrix", pch = 21,
 (b) Compute the matrix of correlations between the variables using
 the function cor(). You will need to exclude the name variable, cor() which is qualitative.
 
+####Correlation
+
 ```{r q9b , include=TRUE, echo=TRUE}
 Auto2 = Auto[,(1:8)]
 #head(Auto2)

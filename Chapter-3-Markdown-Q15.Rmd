@@ -1,0 +1,99 @@
+---
+title: 'ISLR: Chapter 3 : Q15'
+author: "Akhilesh Jain"
+date: "August 1, 2017"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=8, fig.height=6, fig.path='Figs/',
+                      echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+15. This problem involves the Boston data set, which we saw in the lab for this chapter. We will now try to predict per capita crime rate using the other variables in this data set. In other words, per capita crime rate is the response, and the other variables are the predictors.
+
+## Load Libraries
+
+```{r load library , results="hide"}
+library("MASS")
+library("ISLR")
+```
+
+Boston Dataframe
+
+```{r summary , include=TRUE, echo=TRUE}
+summary(Boston)
+names(Boston)
+attach(Boston) #Use column names as variables
+pairs(Boston, labels = colnames(Boston), main = "Boston Pairs matrix", pch = 21, 
+      bg = c("green3", "blue", "yellow", "orange", "red", "green3", "pink")[unclass(Boston$rad)], lower.panel = NULL)
+
+#fix(Boston) # view dataframe
+```
+
+(a) For each predictor, fit a simple linear regression model to predict the response. Describe your results. In which of the models is there a statistically significant association between the predictor and the response? Create some plots to back up your assertions.
+
+#### Correlation
+
+```{r q15 , include=TRUE, echo=TRUE}
+COR <- cor(Boston)
+image(x=seq(nrow(COR)), y=seq(ncol(COR)), z=cor(Boston), axes=F, xlab="", ylab="")
+text(expand.grid(x=seq(dim(COR)[1]), y=seq(dim(COR)[2])), labels=round(c(COR),2))
+box()
+axis(1, at=seq(nrow(COR)), labels = rownames(COR), las=2)
+axis(2, at=seq(ncol(COR)), labels = colnames(COR), las=1)
+```
+
+###### Simple Linear regression
+
+```{r q15a , include=TRUE, echo=TRUE}
+lm.fit.zn=lm(crim~zn,data=Boston)
+summary(lm.fit.zn)
+lm.fit.indus=lm(crim~indus,data=Boston)
+summary(lm.fit.indus)
+lm.fit.chas=lm(crim~chas,data=Boston)
+summary(lm.fit.chas)
+lm.fit.nox=lm(crim~nox,data=Boston)
+summary(lm.fit.nox)
+lm.fit.rm=lm(crim~rm,data=Boston)
+summary(lm.fit.rm)
+lm.fit.age=lm(crim~age,data=Boston)
+summary(lm.fit.age)
+lm.fit.dis=lm(crim~dis,data=Boston)
+summary(lm.fit.dis)
+lm.fit.rad=lm(crim~rad,data=Boston)
+summary(lm.fit.rad)
+lm.fit.tax=lm(crim~tax,data=Boston)
+summary(lm.fit.tax)
+lm.fit.ptratio=lm(crim~ptratio,data=Boston)
+summary(lm.fit.ptratio)
+lm.fit.black=lm(crim~black,data=Boston)
+summary(lm.fit.black)
+lm.fit.lstat=lm(crim~lstat,data=Boston)
+summary(lm.fit.lstat)
+lm.fit.medv=lm(crim~medv,data=Boston)
+summary(lm.fit.medv)
+```
+
+
+(b) Fit a multiple regression model to predict the response using
+all of the predictors. Describe your results. For which predictors
+can we reject the null hypothesis H0:βj =0?
+
+```{r q15b , include=TRUE, echo=TRUE}
+lm.fit=lm(crim~.,data=Boston)
+summary(lm.fit)
+```
+
+(c) How do your results from (a) compare to your results from (b)?
+Create a plot displaying the univariate regression coefficients
+from (a) on the x-axis, and the multiple regression coefficients
+from (b) on the y-axis. That is, each predictor is displayed as a
+single point in the plot. Its coefficient in a simple linear regression model is shown on the x-axis, and its coefficient estimate
+in the multiple linear regression model is shown on the y-axis.
+(d) Is there evidence of non-linear association between any of the
+predictors and the response? To answer this question, for each
+predictorX, fit a model of the form
+Y=β0+β1X+β2X2
++β3X3
++.
