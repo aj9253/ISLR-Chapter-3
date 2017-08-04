@@ -141,3 +141,18 @@ summary(lm_poly_lstat)
 lm_poly_medv=lm(crim~poly(medv,3),data=Boston)
 summary(lm_poly_medv)
 ```
+
+The crime rate is dependent on :
+
+zn    - 1,2
+indus - 1,2,3
+nox   - 1,2,3
+rm - 1,2
+age - 1,2,3
+dis - 1,2,3
+rad -1,2
+tax - 1,2
+ptratio - 1,2,3
+black -1
+lstat - 1,2
+medv - 1,2,3
